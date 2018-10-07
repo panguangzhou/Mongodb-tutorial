@@ -1,0 +1,177 @@
+》》》》mongodb安装使用 (Robo 3T可视化界面)
+
+》》下载地址https://www.mongodb.com/cloud
+
+》找到bin文件目录，打开cmd
+  输入命令 mongod -- dbpath +路径
+
+》返回bin目录找到mongo.exe，管理员身份执行（前面的命令窗口不要关闭）
+
+
+》相关的命令
+
+db.help()//帮助
+db.stats()//统计
+
+show dbs //显示数据库
+db	 //检查当前选择的数据库
+
+use	//添加数据库（数据库有内容才显示）
+
+use 数据库名
+//switched to db 数据库名
+db.dropDatabase()		//先切换到对应的数据库，然后在执行这个语句
+
+
+》》》》》》node.js操作mongodb
+
+》》》连接数据库
+let MongoClient = require('mongodb').MongoClient;
+//结尾是选择数据库名
+let DB_CONN_STR='mongodb://localhost:27017/数据库名';
+
+MongoClient.connect(DB_CONN_STR,function(err,db){
+	console.log('连接成功!');
+})
+
+》》》插入数据
+let MongoClient = require('mongodb').MongoClient;
+//结尾是选择数据库名
+
+var DB_CONN_STR = 'mongodb://localhost:27017/hell';
+MongoClient.connect(DB_CONN_STR, function(err, db) {
+  console.log("连接成功！");
+  //连接到集合
+  let dbo = db.db('hell');
+  //插入数据
+  let myobj = [
+      {name:'张三',age:18,sex:'男'},
+      {name:'李四',age:20,sex:'男'},
+      {name:'赵六',age:30,sec:'女'}
+  ];
+  dbo.collection('runoob').insertMany(myobj,function(err,res){
+      if(err){
+          console.log(err)
+      }
+      console.log('插入的文档数量为:'+res.insertedCount);
+      //关闭数据库
+      db.close();
+  })
+});
+
+》》》查询数据
+let MongoClient = require('mongodb').MongoClient;
+//结尾是选择数据库名
+
+var DB_CONN_STR = 'mongodb://localhost:27017/hell';
+MongoClient.connect(DB_CONN_STR, function(err, db) {
+  console.log("连接成功！");
+  //连接到集合
+  let dbo = db.db('hell');
+  //查询数据
+//find({要查找的数据})，当前语句为查询所有的数据
+//以指定条件来查询
+//let name ={name:'张三'} //查询条件
+//find(name)
+  dbo.collection('runoob').find({}).toArray(function(err,result){
+	if(err){
+	  console.log(err)
+	}
+   console.log(result);
+//关闭数据库
+   db.close();
+})
+});
+
+》》》更新数据
+let MongoClient = require('mongodb').MongoClient;
+//结尾是选择数据库名
+
+var DB_CONN_STR = 'mongodb://localhost:27017/hell';
+
+MongoClient.connect(DB_CONN_STR,function(err,db){
+    console.log('连接成功!');
+    //连接到集合
+    let dbo = db.db('hell');
+    let whereStr ={'name':'张三'};  //查询条件
+    let updataStr ={$set:{'age':100}}
+//更新多条数据 updateMany
+    dbo.collection('runoob').updateOne(whereStr,updataStr,function(err,res){
+        if(err){
+            console.log(err)
+        }
+        console.log('更新文档成功');
+        db.close();
+    })
+》》》删除数据
+
+let MongoClient = require('mongodb').MongoClient;
+let DB_CONN_STR ='mongodb://localhost:27017/hell';
+MongoClient.connect(DB_CONN_STR,function(err,db){
+    console.log('连接成功');
+    //连接集合
+    let dbo = db.db('hell');
+    let myobj=
+        {name:'王七'}
+//deleteOne删除一个数据，语句中删除多个数据
+    dbo.collection('runoob').deleteMany(myobj,function(err,res){
+        if(err){
+            console.log(err)
+        }
+        console.log('删除成功');
+        db.close();
+    })
+})
+
+》》》排序
+let MongoClient = require('mongodb').MongoClient;
+let DB_CONN_STR = 'mongodb://localhost:27017/goodslist';
+MongoClient.connect(DB_CONN_STR,function(err,db){
+    if(err){
+        console.log(err)
+    }
+    console.log('连接成功');
+    let dbo = db.db('goodslist');
+    let mysort={type:1}
+    //以价格为例，进行排序
+    dbo.collection('runoob').find().sort("price",-1).toArray(function(err,result){
+        if(err){
+            console.log(err)
+        }
+        console.log(result);
+        db.close();
+    })
+})
+
+》》》创建数据库
+
+let MongoClient = require('mongodb').MongoClient;
+let DB_CONN_STR = 'mongodb://localhost:27017/goodslist';
+MongoClient.connect(DB_CONN_STR,function(err,db){
+    if(err){
+        console.log(err)
+    }
+    console.log('数据库已经创建成功');
+    //连接集合
+    let dbo = db.db('goodslist');
+    //往数据库里面添加数据
+    let goods=[
+        {name:'商品1',price:998,heat:90,star:5},
+        {name:'商品2',price:668,heat:85,star:3},
+        {name:'商品3',price:779,heat:57,star:2},
+        {name:'商品4',price:1990,heat:28,star:0},
+        {name:'商品5',price:355,heat:98,star:5}
+    ];
+    dbo.collection('runoob').insertMany(goods,function(err,res){
+        if(err){
+            console(err)
+        }
+        console.log('成功加入数据：'+res.insertedCount);
+        db.close();
+    })
+})
+
+	
+
+
+
